@@ -1,0 +1,15 @@
+repository_type: pipeline
+
+nf_core_version: 3.3.1
+
+lint: {}
+
+template:
+  org: nf-core
+  name: nfphasing
+  description: Nextflow pipeline for running phasing software like WhatsHap
+  author: Tobias Schraink
+  version: 1.0.0dev
+  force: true
+  outdir: .
+  is_nfcore: true
