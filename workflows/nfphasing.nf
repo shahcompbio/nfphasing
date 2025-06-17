@@ -39,7 +39,6 @@ workflow NFPHASING {
                 row.sv ? file(row.sv) : file(params.no_file)
             ]
             }
-            .view()
     ch_whatshap_phase = inputs.map { 
         ref, sample, bam, snv, sv -> 
             [ ref, sample, bam, snv ] 
@@ -48,8 +47,9 @@ workflow NFPHASING {
         ref, sample, bam, snv, sv -> 
             [ ref, sample, bam, snv, sv ] 
         }
-    longphase_results = longphase_phase(ch_longphase_phase)
-    
+    longphase = longphase_phase(ch_longphase_phase)
+    gzipped_vcf = bgzip(longphase.phased_vcf)
+    tabix_indexed_vcf = tabix(gzipped_vcf.gz_vcf)
 
 
 }
@@ -63,7 +63,6 @@ process longphase_phase {
 
     output:
     path phased_vcf, emit: phased_vcf
-    val(sample), emit: sample
 
     script:
     phased_prefix = "longphase_${sample}"
@@ -77,23 +76,41 @@ process longphase_phase {
         ${sv ? "--sv-file $sv" : ""} \
         -t ${task.cpus} \
         -o "$phased_prefix" \
-        --ont 
+        --ont
+    """
+}
+
+process bgzip {
+    publishDir "results"
+    container "quay.io/biocontainers/samtools:1.22--h96c455f_0"
+
+    input:
+    path vcf
+
+    output:
+    path gz_vcf, emit: gz_vcf
+
+    script:
+    gz_vcf = "${vcf.baseName}.vcf.gz"
+    """
+    bgzip -c "${vcf}" > "${gz_vcf}"
     """
 }
 
 process tabix {
     publishDir "results"
+    container "quay.io/biocontainers/tabix:0.2.5--0"
 
     input:
-    path phased_vcf, emit: phased_vcf
-    val(sample), emit: sample
+    path vcf
 
     output:
-    path "${phased_vcf}.tbi", emit: tbi
+    path tbi, emit: tbi
 
     script:
+    tbi = "${vcf}.tbi"
     """
-    tabix -p vcf "$phased_vcf"
+    tabix -p vcf "$vcf"
     """
 }
 
