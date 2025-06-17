@@ -1,11 +1,9 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf-core/nfphasing
+    shahcompbio/nfphasing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf-core/nfphasing
-    Website: https://nf-co.re/nfphasing
-    Slack  : https://nfcore.slack.com/channels/nfphasing
+    Github : https://github.com/shahcompbio/nfphasing
 ----------------------------------------------------------------------------------------
 */
 
@@ -16,20 +14,7 @@
 */
 
 include { NFPHASING  } from './workflows/nfphasing'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_nfphasing_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_nfphasing_pipeline'
-include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_nfphasing_pipeline'
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-// TODO nf-core: Remove this line if you don't need a FASTA file
-//   This is an example of how to use getGenomeAttribute() to fetch parameters
-//   from igenomes.config using `--genome`
-params.fasta = getGenomeAttribute('fasta')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,9 +38,17 @@ workflow NFCORE_NFPHASING {
     NFPHASING (
         samplesheet
     )
-    emit:
-    multiqc_report = NFPHASING.out.multiqc_report // channel: /path/to/multiqc_report.html
+
 }
+
+if (!params.input) {
+    error "Missing required parameter: --input"
+}
+if (!params.outdir) {
+    error "Missing required parameter: --outdir"
+}
+
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -65,35 +58,8 @@ workflow NFCORE_NFPHASING {
 workflow {
 
     main:
-    //
-    // SUBWORKFLOW: Run initialisation tasks
-    //
-    PIPELINE_INITIALISATION (
-        params.version,
-        params.validate_params,
-        params.monochrome_logs,
-        args,
-        params.outdir,
-        params.input
-    )
-
-    //
-    // WORKFLOW: Run main workflow
-    //
     NFCORE_NFPHASING (
-        PIPELINE_INITIALISATION.out.samplesheet
-    )
-    //
-    // SUBWORKFLOW: Run completion tasks
-    //
-    PIPELINE_COMPLETION (
-        params.email,
-        params.email_on_fail,
-        params.plaintext_email,
-        params.outdir,
-        params.monochrome_logs,
-        params.hook_url,
-        NFCORE_NFPHASING.out.multiqc_report
+        params.input
     )
 }
 
