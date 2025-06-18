@@ -6,15 +6,15 @@
 
     <meta
       name="description"
-      content="nf-core/nfphasing: Nextflow pipeline for running phasing software like WhatsHap"
+      content="shahcompbio/nfphasing: Nextflow pipeline for running phasing software like WhatsHap"
     />
-    <title>nf-core/nfphasing Pipeline Report</title>
+    <title>shahcompbio/nfphasing Pipeline Report</title>
   </head>
   <body>
     <div style="font-family: Helvetica, Arial, sans-serif; padding: 30px; max-width: 800px; margin: 0 auto">
       <img src="cid:nfcorepipelinelogo" />
 
-      <h1>nf-core/nfphasing ${version}</h1>
+      <h1>shahcompbio/nfphasing ${version}</h1>
       <h2>Run Name: $runName</h2>
 
       <% if (!success){ out << """
@@ -29,7 +29,7 @@
           border-radius: 4px;
         "
       >
-        <h4 style="margin-top: 0; color: inherit">nf-core/nfphasing execution completed unsuccessfully!</h4>
+        <h4 style="margin-top: 0; color: inherit">shahcompbio/nfphasing execution completed unsuccessfully!</h4>
         <p>The exit status of the task that caused the workflow execution to fail was: <code>$exitStatus</code>.</p>
         <p>The full error message was:</p>
         <pre style="white-space: pre-wrap; overflow: visible; margin-bottom: 0">${errorReport}</pre>
@@ -46,7 +46,7 @@
           border-radius: 4px;
         "
       >
-        nf-core/nfphasing execution completed successfully!
+        shahcompbio/nfphasing execution completed successfully!
       </div>
       """ } %>
 
@@ -106,8 +106,8 @@ $commandLine</pre
         </tbody>
       </table>
 
-      <p>nf-core/nfphasing</p>
-      <p><a href="https://github.com/nf-core/nfphasing">https://github.com/nf-core/nfphasing</a></p>
+      <p>shahcompbio/nfphasing</p>
+      <p><a href="https://github.com/shahcompbio/nfphasing">https://github.com/shahcompbio/nfphasing</a></p>
     </div>
   </body>
 </html>

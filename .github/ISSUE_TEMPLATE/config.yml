@@ -4,4 +4,4 @@ contact_links:
     about: Please join the nf-core community here
   - name: "Slack #nfphasing channel"
     url: https://nfcore.slack.com/channels/nfphasing
-    about: Discussion about the nf-core/nfphasing pipeline
+    about: Discussion about the shahcompbio/nfphasing pipeline

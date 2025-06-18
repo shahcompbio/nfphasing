@@ -1,4 +1,4 @@
-# nf-core/nfphasing: Output
+# shahcompbio/nfphasing: Output
 
 ## Introduction
 

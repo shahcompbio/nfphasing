@@ -1,5 +1,5 @@
 //
-// Subworkflow with functionality specific to the nf-core/nfphasing pipeline
+// Subworkflow with functionality specific to the shahcompbio/nfphasing pipeline
 //
 
 /*

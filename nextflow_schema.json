@@ -1,7 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/nf-core/nfphasing/master/nextflow_schema.json",
-    "title": "nf-core/nfphasing pipeline parameters",
+    "$id": "https://raw.githubusercontent.com/shahcompbio/nfphasing/master/nextflow_schema.json",
+    "title": "shahcompbio/nfphasing pipeline parameters",
     "description": "Nextflow pipeline for running phasing software like WhatsHap",
     "type": "object",
     "$defs": {

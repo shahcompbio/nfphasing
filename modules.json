@@ -1,6 +1,6 @@
 {
-    "name": "nf-core/nfphasing",
-    "homePage": "https://github.com/nf-core/nfphasing",
+    "name": "shahcompbio/nfphasing",
+    "homePage": "https://github.com/shahcompbio/nfphasing",
     "repos": {
         "https://github.com/nf-core/modules.git": {
             "modules": {
