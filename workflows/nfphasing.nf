@@ -49,7 +49,7 @@ workflow NFPHASING {
     ch_longphase_phase = inputs
         .map {
             ref, ref_index, sample, bam, bam_index, snv, sv -> 
-            [ ref, sample, bam, snv, sv ] 
+            [ ref, ref_index, sample, bam, bam_index, snv, sv ] 
         }
     longphase = longphase_phase(ch_longphase_phase)
     whatshap = whatshap_phase(ch_whatshap_phase)
@@ -61,30 +61,6 @@ workflow NFPHASING {
 
 }
 
-process longphase_phase {
-    container "quay.io/biocontainers/longphase:1.7.3--hf5e1c6e_0"
-
-    input:
-    tuple path(ref), val(sample), path(bam), path(snv), path(sv)
-
-    output:
-    path phased_vcf, emit: phased_vcf
-
-    script:
-    phased_prefix = "longphase_${sample}"
-    phased_vcf = "${phased_prefix}.vcf"
-    sv = sv.name == no_file_name ? null : sv
-    """
-    longphase phase \\
-        -b "$bam" \\
-        -r "$ref" \\
-        -s "$snv" \\
-        ${sv ? "--sv-file $sv" : ""} \\
-        -t ${task.cpus} \\
-        -o "$phased_prefix" \\
-        --ont
-    """
-}
 
 process bgzip {
     publishDir "results"
@@ -134,6 +110,31 @@ process index_bam {
     indexed_bam = "${bam}.bai"
     """
     samtools index "$bam"
+    """
+}
+
+process longphase_phase {
+    container "quay.io/biocontainers/longphase:1.7.3--hf5e1c6e_0"
+
+    input:
+    tuple path(ref), path(ref_index), val(sample), path(bam), path(bam_index), path(snv), path(sv)
+
+    output:
+    path phased_vcf, emit: phased_vcf
+
+    script:
+    phased_prefix = "longphase_${sample}"
+    phased_vcf = "${phased_prefix}.vcf"
+    sv = sv.name == no_file_name ? null : sv
+    """
+    longphase phase \\
+        -b "$bam" \\
+        -r "$ref" \\
+        -s "$snv" \\
+        ${sv ? "--sv-file $sv" : ""} \\
+        -t ${task.cpus} \\
+        -o "$phased_prefix" \\
+        --ont
     """
 }
 
