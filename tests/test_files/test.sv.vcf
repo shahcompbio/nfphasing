@@ -1,0 +1,42 @@
+##fileformat=VCFv4.2
+##FILTER=<ID=PASS,Description="All filters passed">
+##source=Sniffles2_2.0.3
+##command="/home/epi2melabs/conda/bin/sniffles --threads 2 --sample-id SHAH_H002213_N01_01_WG01_R1 --output-rnames --cluster-merge-pos 150 --input SHAH_H002213_N01_01_WG01_R1.filtered.bam --tandem-repeats human_hs37d5.trf.bed --vcf SHAH_H002213_N01_01_WG01_R1.sniffles.vcf"
+##fileDate="2022/08/17 13:14:28"
+##contig=<ID=1,length=201>
+##ALT=<ID=INS,Description="Insertion">
+##ALT=<ID=DEL,Description="Deletion">
+##ALT=<ID=DUP,Description="Duplication">
+##ALT=<ID=INV,Description="Inversion">
+##ALT=<ID=BND,Description="Breakend; Translocation">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype quality">
+##FORMAT=<ID=DR,Number=1,Type=Integer,Description="Number of reference reads">
+##FORMAT=<ID=DV,Number=1,Type=Integer,Description="Number of variant reads">
+##FORMAT=<ID=ID,Number=1,Type=String,Description="Individual sample SV ID for multi-sample output">
+##FILTER=<ID=GT,Description="Genotype filter">
+##FILTER=<ID=CONS,Description="Low support for insertion consensus sequence">
+##INFO=<ID=PRECISE,Number=0,Type=Flag,Description="Structural variation with precise breakpoints">
+##INFO=<ID=IMPRECISE,Number=0,Type=Flag,Description="Structural variation with imprecise breakpoints">
+##INFO=<ID=SVLEN,Number=1,Type=Integer,Description="Length of structural variation">
+##INFO=<ID=SVTYPE,Number=1,Type=String,Description="Type of structural variation">
+##INFO=<ID=CHR2,Number=1,Type=String,Description="Mate chromsome for BND SVs">
+##INFO=<ID=SUPPORT,Number=1,Type=Integer,Description="Number of reads supporting the structural variation">
+##INFO=<ID=SUPPORT_INLINE,Number=1,Type=Integer,Description="Number of reads supporting an INS/DEL SV (non-split events only)">
+##INFO=<ID=SUPPORT_LONG,Number=1,Type=Integer,Description="Number of soft-clipped reads putatively supporting the long insertion SV">
+##INFO=<ID=END,Number=1,Type=Integer,Description="End position of structural variation">
+##INFO=<ID=STDEV_POS,Number=1,Type=Float,Description="Standard deviation of structural variation start position">
+##INFO=<ID=STDEV_LEN,Number=1,Type=Float,Description="Standard deviation of structural variation length">
+##INFO=<ID=COVERAGE,Number=.,Type=Float,Description="Coverages near upstream, start, center, end, downstream of structural variation">
+##INFO=<ID=STRAND,Number=1,Type=String,Description="Strands of supporting reads for structural variant">
+##INFO=<ID=AC,Number=.,Type=Integer,Description="Allele count, summed up over all samples">
+##INFO=<ID=SUPP_VEC,Number=1,Type=String,Description="List of read support for all samples">
+##INFO=<ID=CONSENSUS_SUPPORT,Number=1,Type=Integer,Description="Number of reads that support the generated insertion (INS) consensus sequence">
+##INFO=<ID=RNAMES,Number=.,Type=String,Description="Names of supporting reads (if enabled with --output-rnames)">
+##INFO=<ID=AF,Number=1,Type=Float,Description="Allele Frequency">
+##INFO=<ID=NM,Number=.,Type=Float,Description="Mean number of query alignment length adjusted mismatches of supporting reads">
+##INFO=<ID=PHASE,Number=.,Type=String,Description="Phasing information derived from supporting reads, represented as list of: HAPLOTYPE,PHASESET,HAPLOTYPE_SUPPORT,PHASESET_SUPPORT,HAPLOTYPE_FILTER,PHASESET_FILTER">
+##bcftools_viewVersion=1.15.1+htslib-1.15.1
+##bcftools_viewCommand=view -T allChromosomes.bed -i '(( SVTYPE = "DEL" || SVTYPE = "INS" || SVTYPE = "DUP" || SVTYPE = "INV" || SVTYPE = "TRA" ) && ABS(SVLEN) >= 30 && ABS(SVLEN) <= 3000000000 && INFO/SUPPORT >= 5)||(SVTYPE = "BND" && INFO/SUPPORT >= 5)' SHAH_H002213_N01_01_WG01_R1.sniffles.vcf; Date=Wed Aug 17 13:36:10 2022
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	SHAH_H002213_N01_01_WG01_R1
+1	64	Sniffles2.INS.4S0	N	CACTCTGTCTCTGCCAACCAGTTAACCTGCTGCTTCCTGGAGGAAGACAGTCCCTCTGTCCCTCTGTCTCTGCCAACCAGTTAACCTGCTGCTTCCTGGAGGAAGACAGTCCCTCTGT	60	PASS	PRECISE;SVTYPE=INS;SVLEN=115;END=90263;SUPPORT=6;RNAMES=f3fe1d9e-2c97-4576-8448-0f5a4446660b,d3fc0ef0-8f12-4316-8760-5ca191114199,daa2a73e-56b5-43da-a4ad-e4cf7dc50ae2,c26991d1-f85a-4946-bc82-6e37c63013eb,e8fa9f1f-4601-4dde-89a2-7bc5d513b24c,122acb8e-ee18-43a9-bcc7-54cc6152c398;COVERAGE=7,5,5,5,5;STRAND=+-;AF=1;STDEV_LEN=2.449;STDEV_POS=2;SUPPORT_LONG=0	GT:GQ:DR:DV	1/1:16:0:6
