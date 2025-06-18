@@ -138,7 +138,6 @@ process index_bam {
 }
 
 process whatshap_phase {
-    publishDir "results"
     container "quay.io/biocontainers/whatshap:2.8--py312hf731ba3_0"
 
     input:
