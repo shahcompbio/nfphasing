@@ -16,6 +16,7 @@ println "Running with the following parameters:"
 println "Input samplesheet: ${params.input}"
 
 no_file_name = file(params.no_file).name
+qc_script = file("subworkflows/local/phasingqc/phasingqc.py")
 
 workflow NFPHASING {
 
@@ -51,12 +52,18 @@ workflow NFPHASING {
             ref, ref_index, sample, bam, bam_index, snv, sv -> 
             [ ref, ref_index, sample, bam, bam_index, snv, sv ] 
         }
-    longphase = longphase_phase(ch_longphase_phase)
-    whatshap = whatshap_phase(ch_whatshap_phase)
+    ch_phasing_qc = inputs
+        .map { 
+            ref, ref_index, sample, bam, bam_index, snv, sv -> 
+            [ sample, snv, qc_script ] 
+        } 
+    phasing_qc_out = phasing_qc(ch_phasing_qc)
+    // longphase = longphase_phase(ch_longphase_phase)
+    // whatshap = whatshap_phase(ch_whatshap_phase)
 
-    ch_phased_vcf = longphase.phased_vcf.concat( whatshap.phased_vcf)
-    gzipped_vcf = bgzip(ch_phased_vcf)
-    tabix_indexed_vcf = tabix(gzipped_vcf.gz_vcf)
+    // ch_phased_vcf = longphase.phased_vcf.concat( whatshap.phased_vcf)
+    // gzipped_vcf = bgzip(ch_phased_vcf)
+    // tabix_indexed_vcf = tabix(gzipped_vcf.gz_vcf)
 
 
 }
@@ -156,6 +163,26 @@ process whatshap_phase {
         --ignore-read-groups \\
         "$snv" \\
         "$bam"
+    """
+}
+
+process phasing_qc {
+    container "quay.io/shahlab_singularity/haplotagqc:latest"
+    publishDir params.outdir, mode: 'copy'
+
+    input:
+    tuple val(sample), path(snv), path(script)
+
+    output:
+    path "*.txt", emit: phasing_qc_txt
+    path "*.png", emit: phasing_qc_png
+
+
+    script:
+    """
+    python phasingqc.py \\
+        --vcf "$snv" \\
+        --sample "${sample}}"
     """
 }
 
