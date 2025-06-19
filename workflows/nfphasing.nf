@@ -19,9 +19,9 @@ params.skip_qc = false
 println "Running with the following parameters:"
 println "Input samplesheet: ${params.input}"
 println "Output directory: ${params.outdir}"
-println "Skip longphase: ${params.skip_longphase}"
-println "Skip whatshap: ${params.skip_whatshap}"
-println "Skip QC: ${params.skip_qc}"
+println "--skip_longphase: ${params.skip_longphase}"
+println "--skip_whatshap: ${params.skip_whatshap}"
+println "--skip_qc: ${params.skip_qc}"
 
 no_file_name = file(params.no_file).name
 qc_script = file("${workflow.projectDir}/subworkflows/local/phasingqc/phasingqc.py")
@@ -61,17 +61,23 @@ workflow NFPHASING {
             [ ref, ref_index, sample, bam, bam_index, snv, sv ] 
         }
 
-    longphase = longphase_phase(ch_longphase_phase)
-    whatshap = whatshap_phase(ch_whatshap_phase)
+    longphase = params.skip_longphase ? Channel.empty() : longphase_phase(ch_longphase_phase)
+    whatshap = params.skip_whatshap ? Channel.empty() : whatshap_phase(ch_whatshap_phase)
 
     ch_phased_vcf = longphase.concat( whatshap)
-    gzipped_vcf = bgzip(ch_phased_vcf)
-    tabix_indexed_vcf = tabix(gzipped_vcf)
-    ch_phasingqc = tabix_indexed_vcf
+
+    if (params.skip_longphase && params.skip_whatshap) {
+
+    }
+    else {
+        gzipped_vcf = bgzip(ch_phased_vcf)
+        tabix_indexed_vcf = tabix(gzipped_vcf)
+        ch_phasingqc = tabix_indexed_vcf
         .map { sample, vcf, tbi -> 
             [ sample, vcf, tbi, qc_script ] 
         }
-    qc = phasing_qc(ch_phasingqc)
+        qc = params.skip_qc ? Channel.empty() : phasing_qc(ch_phasingqc)
+    }
 
 }
 
