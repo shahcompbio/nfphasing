@@ -16,7 +16,7 @@ println "Running with the following parameters:"
 println "Input samplesheet: ${params.input}"
 
 no_file_name = file(params.no_file).name
-qc_script = file("subworkflows/local/phasingqc/phasingqc.py")
+qc_script = file("${workflow.projectDir}/subworkflows/local/phasingqc/phasingqc.py")
 
 workflow NFPHASING {
 
