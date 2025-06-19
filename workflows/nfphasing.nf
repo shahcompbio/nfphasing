@@ -67,6 +67,11 @@ workflow NFPHASING {
     ch_phased_vcf = longphase.concat( whatshap)
     gzipped_vcf = bgzip(ch_phased_vcf)
     tabix_indexed_vcf = tabix(gzipped_vcf)
+    ch_phasingqc = tabix_indexed_vcf
+        .map { sample, vcf, tbi -> 
+            [ sample, vcf, tbi, qc_script ] 
+        }
+    qc = phasing_qc(ch_phasingqc)
 
 }
 
@@ -96,7 +101,7 @@ process tabix {
     tuple val (sample), path (vcf)
 
     output:
-    tuple val (sample), path (tbi)
+    tuple val (sample), path(vcf), path (tbi)
 
     script:
     tbi = "${vcf}.tbi"
@@ -157,7 +162,7 @@ process phasing_qc {
     publishDir params.outdir, mode: 'copy'
 
     input:
-    tuple val (sample), path (snv), path (script)
+    tuple val (sample), path (vcf), path(tbi), path (script)
 
     output:
     path "*.txt", emit: phasing_qc_txt
@@ -167,8 +172,8 @@ process phasing_qc {
     script:
     """
     python phasingqc.py \\
-        --vcf "$snv" \\
-        --sample "${sample}}"
+        --vcf "$vcf" \\
+        --sample "${sample}"
     """
 }
 

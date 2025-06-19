@@ -165,7 +165,11 @@ def export_n50(block_stats: pd.DataFrame, patient_id: str):
     """
     Export N50 to a file.
     """
-    n50 = compute_n50(block_stats)
+    try:
+        n50 = compute_n50(block_stats)
+    except ValueError as e:
+        print(f"Error computing N50: {e}")
+        n50 = -1
     with open(f"{patient_id}_n50.txt", 'w') as f:
         f.write(f"{n50}\n")
 
