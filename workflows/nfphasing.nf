@@ -10,10 +10,18 @@
     RUN MAIN WORKFLOW
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+// set default params
+params.skip_longphase = false
+params.skip_whatshap = false
+params.skip_qc = false
 
 // Define inputs
 println "Running with the following parameters:"
 println "Input samplesheet: ${params.input}"
+println "Output directory: ${params.outdir}"
+println "Skip longphase: ${params.skip_longphase}"
+println "Skip whatshap: ${params.skip_whatshap}"
+println "Skip QC: ${params.skip_qc}"
 
 no_file_name = file(params.no_file).name
 qc_script = file("${workflow.projectDir}/subworkflows/local/phasingqc/phasingqc.py")
@@ -52,32 +60,26 @@ workflow NFPHASING {
             ref, ref_index, sample, bam, bam_index, snv, sv -> 
             [ ref, ref_index, sample, bam, bam_index, snv, sv ] 
         }
-    ch_phasing_qc = inputs
-        .map { 
-            ref, ref_index, sample, bam, bam_index, snv, sv -> 
-            [ sample, snv, qc_script ] 
-        } 
-    phasing_qc_out = phasing_qc(ch_phasing_qc)
-    // longphase = longphase_phase(ch_longphase_phase)
-    // whatshap = whatshap_phase(ch_whatshap_phase)
 
-    // ch_phased_vcf = longphase.phased_vcf.concat( whatshap.phased_vcf)
-    // gzipped_vcf = bgzip(ch_phased_vcf)
-    // tabix_indexed_vcf = tabix(gzipped_vcf.gz_vcf)
+    longphase = longphase_phase(ch_longphase_phase)
+    whatshap = whatshap_phase(ch_whatshap_phase)
 
+    ch_phased_vcf = longphase.concat( whatshap)
+    gzipped_vcf = bgzip(ch_phased_vcf)
+    tabix_indexed_vcf = tabix(gzipped_vcf)
 
 }
 
 
 process bgzip {
-    publishDir "results"
+    publishDir params.outdir, mode: 'copy'
     container "quay.io/biocontainers/samtools:1.22--h96c455f_0"
 
     input:
-    path vcf
+    tuple val (sample), path (vcf)
 
     output:
-    path gz_vcf, emit: gz_vcf
+    tuple val (sample), path (gz_vcf)
 
     script:
     gz_vcf = "${vcf.baseName}.vcf.gz"
@@ -87,14 +89,14 @@ process bgzip {
 }
 
 process tabix {
-    publishDir "results"
+    publishDir params.outdir, mode: 'copy'
     container "quay.io/biocontainers/tabix:0.2.5--0"
 
     input:
-    path vcf
+    tuple val (sample), path (vcf)
 
     output:
-    path tbi, emit: tbi
+    tuple val (sample), path (tbi)
 
     script:
     tbi = "${vcf}.tbi"
@@ -103,31 +105,15 @@ process tabix {
     """
 }
 
-process index_bam {
-    publishDir "results"
-    container "quay.io/biocontainers/samtools:1.22--h96c455f_0"
-
-    input:
-    path bam
-
-    output:
-    path indexed_bam, emit: indexed_bam
-
-    script:
-    indexed_bam = "${bam}.bai"
-    """
-    samtools index "$bam"
-    """
-}
 
 process longphase_phase {
     container "quay.io/biocontainers/longphase:1.7.3--hf5e1c6e_0"
 
     input:
-    tuple path(ref), path(ref_index), val(sample), path(bam), path(bam_index), path(snv), path(sv)
+    tuple path (ref), path (ref_index), val (sample), path (bam), path (bam_index), path (snv), path (sv)
 
     output:
-    path phased_vcf, emit: phased_vcf
+    tuple val (sample), path (phased_vcf)
 
     script:
     phased_prefix = "longphase_${sample}"
@@ -149,10 +135,10 @@ process whatshap_phase {
     container "quay.io/biocontainers/whatshap:2.8--py312hf731ba3_0"
 
     input:
-    tuple path(ref), path(ref_index), val(sample), path(bam), path(bam_index), path(snv)
+    tuple path (ref), path (ref_index), val (sample) , path (bam) , path (bam_index) , path (snv)
 
     output:
-    path phased_vcf, emit: phased_vcf
+    tuple val (sample), path (phased_vcf)
 
     script:
     phased_vcf = "whatshap_${sample}.vcf"
@@ -171,7 +157,7 @@ process phasing_qc {
     publishDir params.outdir, mode: 'copy'
 
     input:
-    tuple val(sample), path(snv), path(script)
+    tuple val (sample), path (snv), path (script)
 
     output:
     path "*.txt", emit: phasing_qc_txt
