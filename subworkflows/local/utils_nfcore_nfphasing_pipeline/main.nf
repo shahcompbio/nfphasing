@@ -261,3 +261,11 @@ def methodsDescriptionText(mqc_methods_yaml) {
 
     return description_html.toString()
 }
+
+def test_path(path) {
+    // if inside the test env, the path is relative to the project directory
+    if (params.test) {
+        return "${workflow.projectDir}/${path}"
+    }
+    return path
+}

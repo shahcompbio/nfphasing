@@ -4,7 +4,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-
+include { test_path } from '../subworkflows/local/utils_nfcore_nfphasing_pipeline/main.nf'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -23,8 +23,11 @@ println "--skip_longphase: ${params.skip_longphase}"
 println "--skip_whatshap: ${params.skip_whatshap}"
 println "--skip_qc: ${params.skip_qc}"
 
+no_file = file("${workflow.projectDir}/${params.no_file}")
 no_file_name = file(params.no_file).name
 qc_script = file("${workflow.projectDir}/subworkflows/local/phasingqc/phasingqc.py")
+
+
 
 workflow NFPHASING {
 
@@ -37,15 +40,16 @@ workflow NFPHASING {
          .splitCsv(header: true)
          .map { 
             row -> [
-                file(row.ref),
-                file(row.ref_index),
+                file(test_path(row.ref)),
+                file(test_path(row.ref_index)),
                 row.sample,
-                file(row.bam),
-                file(row.bam_index), 
-                file(row.snv), 
-                row.sv ? file(row.sv) : file(params.no_file) // use no_file as sentinel if sv is not provided
+                file(test_path(row.bam)),
+                file(test_path(row.bam_index)), 
+                file(test_path(row.snv)), 
+                row.sv ? file(test_path(row.sv)) : no_file // use no_file as sentinel if sv is not provided
             ]
             }
+
     ch_whatshap_phase = inputs
         .filter { 
             ref, ref_index, sample, bam, bam_index, snv, sv -> 
