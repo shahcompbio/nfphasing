@@ -6,8 +6,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import click
 
-vcf_filename = "phased_variants.vcf.gz"
-patient_id = "patient_27976"
 
 def read_vcf(vcf_path:str) -> pd.DataFrame:
     """
