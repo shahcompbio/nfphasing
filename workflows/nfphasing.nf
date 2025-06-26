@@ -128,11 +128,11 @@ process longphase_phase {
     tuple path (ref), path (ref_index), val (sample), path (bam), path (bam_index), path (snv), path (sv)
 
     output:
-    tuple val (sample), path (phased_vcf)
+    tuple val (phased_prefix), path (phased_vcf)
 
     script:
     sv = sv.name == no_file_name ? null : sv
-    phased_prefix = "longphase_${sv ?'sv':''}${sample}"
+    phased_prefix = "longphase_${sv ?'sv_':''}${sample}"
     phased_vcf = "${phased_prefix}.vcf"
     """
     longphase phase \\
