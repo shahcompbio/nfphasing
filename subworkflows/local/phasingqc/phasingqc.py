@@ -78,7 +78,7 @@ def plot_genotype_quality(vcf_data: pd.DataFrame, patient_id: str):
     sns.histplot(data=vcf_data, x='gt_qual', bins=10)
     sns.despine()
     plt.title(patient_id)
-    plt.savefig(f"{patient_id}_genotype_quality.png", dpi=300, bbox_inches='tight')
+    plt.savefig(f"genotype_quality_{patient_id}_mqc.png", dpi=300, bbox_inches='tight')
 
 
 # Block stats
@@ -107,7 +107,7 @@ def plot_variants_per_block(block_stats: pd.DataFrame, patient_id: str):
     sns.histplot(x='n_variants', data=block_stats, log_scale=True, bins=20)
     sns.despine()
     plt.title(patient_id)
-    plt.savefig(f"{patient_id}_variants_per_block.png", dpi=300, bbox_inches='tight')
+    plt.savefig(f"variants_per_block_{patient_id}_mqc.png", dpi=300, bbox_inches='tight')
     plt.close()
 
 # Visualize distribution of block lengths
@@ -119,7 +119,7 @@ def plot_block_length_distribution(block_stats: pd.DataFrame, patient_id: str):
     sns.histplot(x='length', data=block_stats, log_scale=True, bins=20)
     sns.despine()
     plt.title(patient_id)
-    plt.savefig(f"{patient_id}_block_length_distribution.png", dpi=300, bbox_inches='tight')
+    plt.savefig(f"block_length_distribution_{patient_id}_mqc.png", dpi=300, bbox_inches='tight')
     plt.close()
 
 # Visualize fraction of allele a that are the alternate allele
@@ -131,7 +131,7 @@ def plot_fraction_allele_a(block_stats: pd.DataFrame, patient_id: str):
     sns.histplot(x='fraction_allele_a_1', data=block_stats.query('n_variants > 10'), bins=20)
     sns.despine()
     plt.title(patient_id)
-    plt.savefig(f"{patient_id}_fraction_allele_a.png", dpi=300, bbox_inches='tight')
+    plt.savefig(f"fraction_allele_a_{patient_id}_mqc.png", dpi=300, bbox_inches='tight')
     plt.close()
 # Compute n50
 # Phasing N50 is the minimum phase block length, where the sum of its phase blocks with all larger phase blocks spans ≥50% of the total phase length.
@@ -168,7 +168,7 @@ def export_n50(block_stats: pd.DataFrame, patient_id: str):
     except ValueError as e:
         print(f"Error computing N50: {e}")
         n50 = -1
-    with open(f"{patient_id}_n50.txt", 'w') as f:
+    with open(f"{patient_id}_n50_mqc.txt", 'w') as f:
         f.write(f"{n50}\n")
 
 
