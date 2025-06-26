@@ -131,9 +131,9 @@ process longphase_phase {
     tuple val (sample), path (phased_vcf)
 
     script:
-    phased_prefix = "longphase_${sample}"
-    phased_vcf = "${phased_prefix}.vcf"
     sv = sv.name == no_file_name ? null : sv
+    phased_prefix = "longphase_${sv ?'sv':''}${sample}"
+    phased_vcf = "${phased_prefix}.vcf"
     """
     longphase phase \\
         -b "$bam" \\
@@ -175,7 +175,7 @@ process phasing_qc {
     tuple val (sample), path (vcf), path(tbi), path (script)
 
     output:
-    path "*.txt", emit: phasing_qc_txt
+    path "*.csv", emit: phasing_qc_csv
     path "*.png", emit: phasing_qc_png
 
 

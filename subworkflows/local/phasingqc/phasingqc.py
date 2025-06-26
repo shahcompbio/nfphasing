@@ -168,8 +168,12 @@ def export_n50(block_stats: pd.DataFrame, patient_id: str):
     except ValueError as e:
         print(f"Error computing N50: {e}")
         n50 = -1
-    with open(f"{patient_id}_n50_mqc.txt", 'w') as f:
-        f.write(f"{n50}\n")
+    df = pd.DataFrame({
+        "sample": [patient_id],
+        "n50": [n50]
+    })
+    df.to_csv(f"{patient_id}_n50_mqc.csv", index=False)
+
 
 
 @click.command()
